@@ -4,19 +4,20 @@ Date.prototype.addHours = function(h) {
 }
 
 Date.prototype.toLINEString = function() {
-  // LINE datetime format follows RFC3339 but it drops seconds, milliseconds and timezone
-  var japString = this.addHours(9).toISOString();
-  var lineString = japString.substring(0, japString.length - 8);
+  // แก้ไขล่าสุด: ปรับเวลาให้เป็นเวลาประเทศไทย (GMT+7)
+  var thaiString = this.addHours(7).toISOString();
+  var lineString = thaiString.substring(0, thaiString.length - 8);
   return lineString;
 }
 
-Date.prototype.toJPString = function(includeTime) {
+Date.prototype.toThaiString = function(includeTime) {
+  // แก้ไขล่าสุด: เปลี่ยนชื่อฟังก์ชันและปรับให้แสดงวันเป็นภาษาไทย
   if (typeof includeTime === "undefined") {
     includeTime = true;
   }
   
   var result = "%Y-%m-%d(%a) %h:%M";
-  var weekdays = ["日", "月", "火", "水", "木", "金", "土"];
+  var weekdays = ["อา", "จ", "อ", "พ", "พฤ", "ศ", "ส"];
   result = result.replace('%Y-', '')
     .replace("%m", ("00" + (this.getMonth() + 1).toString()).slice(-2))
     .replace("%d", ("00" + this.getDate().toString()).slice(-2))
@@ -25,7 +26,6 @@ Date.prototype.toJPString = function(includeTime) {
   if (includeTime) {
     result = result.replace("%h", ("00" + this.getHours().toString()).slice(-2))
       .replace("%M", ("00" + this.getMinutes().toString()).slice(-2));
-      
   } else {
     result = result.replace(" %h:%M", "");
   }
