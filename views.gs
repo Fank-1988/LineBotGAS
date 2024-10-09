@@ -1,15 +1,15 @@
 function generateQuickReplyTopMessage() {
   return {
     type: "text",
-    text: "メニューを選んでください",
+    text: "กรุณาเลือกเมนู",
     quickReply: {
       items: [{
           type: "action",
           imageUrl: "https://www.newsclick.in/sites/default/files/2018-03/rese12.jpg",
           action: {
             type: "postback",
-            label: "予約",
-            displayText: "予約メニューを表示",
+            label: "จอง",
+            displayText: "แสดงเมนูการจอง",
             data: JSON.stringify({
               state: "RESERVATION"
             })
@@ -20,8 +20,8 @@ function generateQuickReplyTopMessage() {
           imageUrl: "https://content.active.com/Assets/Active.com+Content+Site+Digital+Assets/Fitness/580x350/Push-Up.jpg",
           action: {
             type: "postback",
-            label: "筋トレ",
-            displayText: "筋トレのメニューを表示して",
+            label: "ออกกำลังกาย",
+            displayText: "แสดงเมนูการออกกำลังกาย",
             data: JSON.stringify({
               state: "WORKOUT"
             })
@@ -32,27 +32,28 @@ function generateQuickReplyTopMessage() {
   }
 }
 
+
 // --------
-// Reservation Views
+// มุมมองการจอง
 // --------
 
 function generateQuickReplyReservationMessage() {
 
-  // Add nine hours because ISO timezone is always zero offset to UTC as denoted by the suffix "Z"
+  // เพิ่ม 9 ชั่วโมงเพราะ ISO timezone เป็น zero offset กับ UTC เสมอ ดังที่แสดงด้วยคำต่อท้าย "Z"
   var initialDatetimeString = new Date().toLINEString();
   var maxDatetimeString = new Date().addHours(24 * 14).toLINEString();
 
   return {
     type: "text",
-    text: "予約メニューを表示します.",
+    text: "แสดงเมนูการจอง",
     quickReply: {
       items: [{
           type: "action",
           imageUrl: "https://upload.wikimedia.org/wikipedia/en/8/86/Modern-ftn-pen-cursive.jpg",
           action: {
             type: "postback",
-            label: "新規予約",
-            displayText: "新規予約",
+            label: "จองใหม่",
+            displayText: "จองใหม่",
             data: JSON.stringify({
               state: "RESERVATION_CREATE"
             })
@@ -63,8 +64,8 @@ function generateQuickReplyReservationMessage() {
           imageUrl: "https://techflourish.com/images/clipart-calendar-august-2015-22.jpg",
           action: {
             type: "postback",
-            label: "予約確認",
-            displayText: "予約を確認",
+            label: "ตรวจสอบการจอง",
+            displayText: "ตรวจสอบการจอง",
             data: JSON.stringify({
               state: "RESERVATION_READ"
             })
@@ -75,8 +76,8 @@ function generateQuickReplyReservationMessage() {
           imageUrl: "https://vignette.wikia.nocookie.net/oscarthegrouch/images/b/be/Trash_Can.jpg/revision/latest?cb=20120928224249",
           action: {
             type: "postback",
-            label: "予約削除",
-            displayText: "予約を削除",
+            label: "ลบการจอง",
+            displayText: "ลบการจอง",
             data: JSON.stringify({
               state: "RESERVATION_DELETE"
             })
@@ -87,8 +88,8 @@ function generateQuickReplyReservationMessage() {
           imageUrl: "https://pickup.cinemacafe.net/uploads/article/image/1906/card_haul.jpg",
           action: {
             type: "postback",
-            label: "最初に戻る",
-            displayText: "最初に戻る",
+            label: "กลับไปหน้าแรก",
+            displayText: "กลับไปหน้าแรก",
             data: JSON.stringify({
               state: "ROOT"
             })
@@ -100,16 +101,16 @@ function generateQuickReplyReservationMessage() {
 }
 
 function generateMessageForCreateReservationByFlex() {
-  // This way is a little tricky and lacks generality.
-  // First, make array containing every 30 min from now
-  // with minutes 0 to two weeks later, then filter them
-  // to get valid datetime, then filter again to push out occupied datetime.
+  // วิธีนี้ค่อนข้างซับซ้อนและขาดความทั่วไป
+  // ขั้นแรก สร้างอาร์เรย์ที่มีทุก 30 นาทีตั้งแต่ตอนนี้
+  // โดยเริ่มจากนาทีที่ 0 ไปจนถึงสองสัปดาห์ข้างหน้า จากนั้นกรองเพื่อ
+  // ให้ได้วันที่และเวลาที่ถูกต้อง แล้วกรองอีกครั้งเพื่อตัดวันที่และเวลาที่ถูกจองแล้วออก
   var unoccupied_candidate = [];
   var datetime = new Date();
   datetime.setMinutes(0, 0, 0);
   datetime.setHours(datetime.getHours() + 1);
 
-  // Generate array containing Dates of every thirty minutes from now to two weeks
+  // สร้างอาร์เรย์ที่มี Date ทุก 30 นาทีตั้งแต่ตอนนี้ไปจนถึงสองสัปดาห์
   for (var i = 0; i < 14 * 24 * 60; i += 30) {
     var ele_datetime = new Date(datetime.getTime())
     ele_datetime.setMinutes(ele_datetime.getMinutes() + i);
@@ -149,7 +150,7 @@ function generateMessageForCreateReservationByFlex() {
 
   return {
     type: "flex",
-    altText: "This is a Flex Message",
+    altText: "นี่คือข้อความ Flex",
     contents: {
       type: "carousel",
       contents: [{
@@ -159,7 +160,7 @@ function generateMessageForCreateReservationByFlex() {
           layout: "vertical",
           contents: [{
             type: "text",
-            text: "予約"
+            text: "จอง"
           }]
         },
         body: {
@@ -177,7 +178,7 @@ function generateMessageForConfirmReservation(event) {
 
   if (event.postback.hasOwnProperty("params")) {
     // datetimepicker
-    // event.postback.params.datetime is in format like "2018-11-05T21:00"
+    // event.postback.params.datetime อยู่ในรูปแบบเช่น "2018-11-05T21:00"
     var reservationDatetime = new Date(event.postback.params.datetime);
     var reservationTimestamp = reservationDatetime.getTime();
   } else if (event.postback.hasOwnProperty("data")) {
@@ -191,7 +192,7 @@ function generateMessageForConfirmReservation(event) {
   if (!isValidReservationDatetime(reservationDatetime)) {
     return {
       type: "text",
-      text: reservationDatetime.toJPString() + "は予約を受け付けていない時間です."
+      text: reservationDatetime.toJPString() + "เป็นเวลาที่ไม่รับการจอง"
     }
   }
 
@@ -199,7 +200,7 @@ function generateMessageForConfirmReservation(event) {
     if (counted[reservationTimestamp] >= 6) {
       return {
         type: "text",
-        text: reservationDatetime.toJPString() + "は満席です. 他の日時を試してください."
+        text: reservationDatetime.toJPString() + "เต็มแล้ว กรุณาลองเวลาอื่น"
       };
     }
   }
@@ -207,7 +208,7 @@ function generateMessageForConfirmReservation(event) {
   reservation.createReservation(userId, reservationDatetime);
   return {
     type: "text",
-    text: reservationDatetime.toJPString() + "が予約されました. 以下のリンクからCalendarに追加できます.\n" + getGoogleCalendarLink(reservationDatetime)
+    text: reservationDatetime.toJPString() + "ได้รับการจองแล้ว คุณสามารถเพิ่มลงใน Calendar ได้จากลิงก์นี้:\n" + getGoogleCalendarLink(reservationDatetime)
   };
 }
 
@@ -217,7 +218,7 @@ function generateMessageForReadReservation(event, getProfile, CHANNEL_ACCESS_TOK
   var text = reservations.map(function(row) {
     return new Date(parseInt(row[1])).toJPString() + ' ' + getProfile(row[0], CHANNEL_ACCESS_TOKEN).displayName;
   }).join("\n");
-  text = text || "予約がありません.";
+  text = text || "ไม่มีการจอง";
 
   return {
     type: "text",
@@ -232,7 +233,7 @@ function generateMessageForDeleteReservation(event) {
   if (reservations.length === 0) {
     return {
       type: "text",
-      text: '予約がありません.'
+      text: 'ไม่มีการจอง'
     };
   }
 
@@ -256,7 +257,7 @@ function generateMessageForDeleteReservation(event) {
 
   return {
     type: "flex",
-    altText: "This is a Flex Message",
+    altText: "นี่คือข้อความ Flex",
     contents: {
       type: "carousel",
       contents: [{
@@ -266,7 +267,7 @@ function generateMessageForDeleteReservation(event) {
           layout: "vertical",
           contents: [{
             type: "text",
-            text: "予約削除"
+            text: "ลบการจอง"
           }]
         },
         body: {
@@ -285,9 +286,9 @@ function generateMessageForDeleteReservationConfirmation(event, getProfile, CHAN
   var response = reservation.deleteReservation(userId, data.timestamp);
   var text;
   if (response.status == 200) {
-    text = getProfile(userId, CHANNEL_ACCESS_TOKEN).displayName + "さんの" + new Date(data.timestamp).toJPString() + "の予約を削除しました.";
+    text = "ลบการจองของคุณ " + getProfile(userId, CHANNEL_ACCESS_TOKEN).displayName + " วันที่ " + new Date(data.timestamp).toJPString() + " แล้ว";
   } else if (response.status == 404) {
-    text = getProfile(userId, CHANNEL_ACCESS_TOKEN).displayName + "さんの" + new Date(data.timestamp).toJPString() + "の予約は削除済みです.";
+    text = "การจองของคุณ " + getProfile(userId, CHANNEL_ACCESS_TOKEN).displayName + " วันที่ " + new Date(data.timestamp).toJPString() + " ถูกลบไปแล้ว";
   }
   return {
     type: "text",
@@ -296,20 +297,20 @@ function generateMessageForDeleteReservationConfirmation(event, getProfile, CHAN
 }
 
 // --------
-// Workout Views
+// มุมมองการออกกำลังกาย
 // --------
 
 function generateQuickReplyWorkoutMessage() {
   return {
     type: "text",
-    text: "筋トレのメニューを表示します",
+    text: "แสดงเมนูการออกกำลังกาย",
     quickReply: {
       items: [{
           type: "action",
           imageUrl: "https://us.123rf.com/450wm/newartgraphics/newartgraphics1402/newartgraphics140200108/26170093-red-round-speech-bubble-with-video-icon.jpg?ver=6",
           action: {
             type: "camera",
-            label: "トレーニング回数追加",
+            label: "เพิ่มจำนวนครั้งการออกกำลังกาย",
           }
         },
         {
@@ -317,8 +318,8 @@ function generateQuickReplyWorkoutMessage() {
           imageUrl: "https://is5-ssl.mzstatic.com/image/thumb/Purple118/v4/c5/82/c4/c582c405-d78a-ba21-795d-560f19fef45a/AppIcon-1x_U007emarketing-85-220-0-6.png/246x0w.jpg",
           action: {
             type: "postback",
-            label: "回数確認",
-            displayText: "今月のトレーニング回数を確認",
+            label: "ตรวจสอบจำนวนครั้ง",
+            displayText: "ตรวจสอบจำนวนครั้งการออกกำลังกายเดือนนี้",
             data: JSON.stringify({
               state: "WORKOUT_COUNT"
             })
@@ -329,8 +330,8 @@ function generateQuickReplyWorkoutMessage() {
           imageUrl: "https://pickup.cinemacafe.net/uploads/article/image/1906/card_haul.jpg",
           action: {
             type: "postback",
-            label: "最初に戻る",
-            displayText: "最初に戻る",
+            label: "กลับไปหน้าแรก",
+            displayText: "กลับไปหน้าแรก",
             data: JSON.stringify({
               state: "ROOT"
             })
@@ -350,7 +351,7 @@ function generateMessageForAddWorkout(event) {
   var count = workout.count(userId, firstDay)[0][1]; // workout.count() returns [[userid, count]];
   var message = {
     type: "text",
-    text: "GOOD JOB! 今月" + count + '回目のトレーニングです.'
+    text: "เยี่ยมมาก! คุณออกกำลังกายครั้งที่ " + count + ' ของเดือนนี้แล้ว'
   };
   return message;
 }
@@ -363,7 +364,7 @@ function generateMessageForRandomMaxim() {
   return message;
 }
 
-function generateMessageForCountWorkout(event, getProfile, CANNEL_ACCESS_TOKEN) {
+function generateMessageForCountWorkout(event, getProfile, CHANNEL_ACCESS_TOKEN) {
   var userId = event.source.userId;
   var date = new Date();
   var monthToCount = date.getMonth() + 1;
@@ -372,9 +373,9 @@ function generateMessageForCountWorkout(event, getProfile, CANNEL_ACCESS_TOKEN) 
 
   var counts = workout.count(userId, firstDay, lastDay);
   var text = counts.map(function(row) {
-    return getProfile(row[0], CHANNEL_ACCESS_TOKEN).displayName + 'さんの' + monthToCount.toString() + '月のトレーニングは' + row[1].toString() + '回です.';
+    return 'คุณ' + getProfile(row[0], CHANNEL_ACCESS_TOKEN).displayName + ' ออกกำลังกายในเดือน ' + monthToCount.toString() + ' จำนวน ' + row[1].toString() + ' ครั้ง';
   }).join('\n').toString();
-  text = text || 'トレーニング記録はありません.';
+  text = text || 'ไม่มีบันทึกการออกกำลังกาย';
 
   return {
     type: "text",
@@ -383,47 +384,47 @@ function generateMessageForCountWorkout(event, getProfile, CANNEL_ACCESS_TOKEN) 
 }
 
 // --------
-// Welcome Message when you add chat bot to a freind list
+// ข้อความต้อนรับเมื่อคุณเพิ่มแชทบอทเป็นเพื่อน
 // --------
 
 function generateWelcomeMessage() {
   return {
     type: "text",
-    text: "＜筋トレの回数について＞\n" +
-      "バディトレでは、\n" +
-      "・自身でトレーニングした際に動画をアップ\n" +
-      "・バディトレに来た際にトレーニング動画をアップ\n" +
-      "条件は1秒以上の動画であれば、他に指定はありません。\n" +
-      "ただし、30分以上の高い強度でのトレーニングに限ります。\n" +
-      "他の目的で動画をアップすることはお控えください。\n" +
-      "その際に、過去の名将やボディビルダーの名言とともに、botが記憶します。\n" +
-      "名言は単に意識が高くなるだけで、特に深い意味はありません笑 我々なりのユーモアです。\n" +
-      "毎月トップの方にはプロテインか\"燃え燃え\"、そして２位の方にはBCAAをプレゼントします。\n" +
+    text: "＜เกี่ยวกับจำนวนครั้งของการออกกำลังกาย＞\n" +
+      "ในบัดดี้เทรน เราจะนับ:\n" +
+      "・เมื่อคุณอัพโหลดวิดีโอการออกกำลังกายด้วยตัวเอง\n" +
+      "・เมื่อคุณอัพโหลดวิดีโอการออกกำลังกายที่บัดดี้เทรน\n" +
+      "เงื่อนไขคือวิดีโอต้องยาวอย่างน้อย 1 วินาที ไม่มีข้อกำหนดอื่นๆ\n" +
+      "แต่ต้องเป็นการออกกำลังกายที่มีความเข้มข้นสูงอย่างน้อย 30 นาที\n" +
+      "กรุณาอย่าอัพโหลดวิดีโอเพื่อวัตถุประสงค์อื่น\n" +
+      "เมื่ออัพโหลด บอทจะจดจำพร้อมกับคำคมจากผู้นำหรือนักเพาะกายในอดีต\n" +
+      "คำคมเหล่านี้เพียงเพื่อสร้างแรงบันดาลใจ ไม่มีความหมายลึกซึ้งอะไร เป็นเพียงมุกตลกของเรา 😄\n" +
+      "ทุกเดือน ผู้ที่ออกกำลังกายมากที่สุดจะได้รับโปรตีนหรือ \"เผาผลาญ\" และอันดับสองจะได้รับ BCAA\n" +
       "\n" +
-      "＜削除について＞\n" +
-      "今後は枠当たり６人限定です。これまでテスト運用していたbotはしっかり運用してまいります。６人を超えた枠には予約ができなくなります。\n" +
-      "参加できなくなった場合は1時間前までを目安に削除してください。\n" +
-      "あまり無断削除が多いとこちらも対応を考えないといけなくなります。\n" +
-      "一方で、すぐに埋まるような現状が続きましたらクラス増設を検討いたします。一般的に皆様が夜これるであろう19−23時ごろまでは行うつもりです。"
+      "＜เกี่ยวกับการยกเลิก＞\n" +
+      "ต่อไปนี้จะจำกัดที่ 6 คนต่อช่วงเวลา บอทที่เราทดลองใช้มาจนถึงตอนนี้จะถูกนำมาใช้งานจริง ไม่สามารถจองได้เกิน 6 คนต่อช่วงเวลา\n" +
+      "หากไม่สามารถเข้าร่วมได้ กรุณายกเลิกล่วงหน้าอย่างน้อย 1 ชั่วโมง\n" +
+      "หากมีการยกเลิกโดยไม่แจ้งล่วงหน้าบ่อยครั้ง เราอาจต้องพิจารณามาตรการเพิ่มเติม\n" +
+      "ในทางกลับกัน หากสถานการณ์ที่จองเต็มอย่างรวดเร็วยังคงดำเนินต่อไป เราจะพิจารณาเพิ่มคลาส โดยทั่วไปเราตั้งใจจะดำเนินการในช่วงเวลาที่ทุกคนสามารถมาได้ คือประมาณ 19:00-23:00 น."
   };
 }
 
 // --------
-// Administrator Views
+// มุมมองของผู้ดูแลระบบ
 // --------
 
 function generateQuickReplyAdminMessage() {
   return {
     type: "text",
-    text: "管理者用メニューを選んでください",
+    text: "กรุณาเลือกเมนูสำหรับผู้ดูแลระบบ",
     quickReply: {
       items: [{
           type: "action",
           imageUrl: "https://www.newsclick.in/sites/default/files/2018-03/rese12.jpg",
           action: {
             type: "postback",
-            label: "全員の予約を表示",
-            displayText: "全員の予約を表示",
+            label: "แสดงการจองของทุกคน",
+            displayText: "แสดงการจองของทุกคน",
             data: JSON.stringify({
               state: "ADMIN_RESERVATION_READ"
             })
@@ -434,8 +435,8 @@ function generateQuickReplyAdminMessage() {
           imageUrl: "https://content.active.com/Assets/Active.com+Content+Site+Digital+Assets/Fitness/580x350/Push-Up.jpg",
           action: {
             type: "postback",
-            label: "全員の筋トレ回数を表示",
-            displayText: "全員の筋トレ回数を表示",
+            label: "แสดงจำนวนครั้งออกกำลังกายของทุกคน",
+            displayText: "แสดงจำนวนครั้งออกกำลังกายของทุกคน",
             data: JSON.stringify({
               state: "ADMIN_WORKOUT_COUNT"
             })
@@ -446,8 +447,8 @@ function generateQuickReplyAdminMessage() {
           imageUrl: "https://pickup.cinemacafe.net/uploads/article/image/1906/card_haul.jpg",
           action: {
             type: "postback",
-            label: "一般メニューを表示",
-            displayText: "一般メニューを表示",
+            label: "แสดงเมนูทั่วไป",
+            displayText: "แสดงเมนูทั่วไป",
             data: JSON.stringify({
               state: "ROOT"
             })
@@ -484,7 +485,7 @@ function generateMessageForReadAllReservation() {
         style: "link",
         action: {
           type: "postback",
-          label: JPString + " " + row[1] + "人",
+          label: JPString + " " + row[1] + "คน",
           displayText: JPString,
           data: JSON.stringify({
             state: "RESERVATION_RETRIEVE",
@@ -494,7 +495,7 @@ function generateMessageForReadAllReservation() {
       }
     }) || {
       type: "text",
-      text: "予約がありません"
+      text: "ไม่มีการจอง"
     };
     return contents;
   }
@@ -505,7 +506,7 @@ function generateMessageForReadAllReservation() {
 
   return {
     type: "flex",
-    altText: "This is a Flex Message",
+    altText: "นี่คือข้อความ Flex",
     contents: {
       type: "carousel",
       contents: [{
@@ -515,7 +516,7 @@ function generateMessageForReadAllReservation() {
           layout: "vertical",
           contents: [{
             type: "text",
-            text: latestMonth.toString() + "月"
+            text: "เดือน " + latestMonth.toString()
           }]
         },
         body: {
@@ -530,7 +531,7 @@ function generateMessageForReadAllReservation() {
           layout: "vertical",
           contents: [{
             type: "text",
-            text: (latestMonth - 1).toString() + "月"
+            text: "เดือน " + (latestMonth - 1).toString()
           }]
         },
         body: {
@@ -545,7 +546,7 @@ function generateMessageForReadAllReservation() {
           layout: "vertical",
           contents: [{
             type: "text",
-            text: (latestMonth - 2).toString() + "月"
+            text: "เดือน " + (latestMonth - 2).toString()
           }]
         },
         body: {
@@ -577,12 +578,12 @@ function generateMessageForCountAllWorkouts(getProfile, CHANNEL_ACCESS_TOKEN) {
   var date = new Date();
   var latestMonth = date.getMonth() + 1;
 
-  // Latest month
+  // เดือนล่าสุด
   var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
   var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 1);
   var countsThisMonth = workout.count(userToCount, firstDay, lastDay);
 
-  // Previous month
+  // เดือนก่อนหน้า
   var prevMonth = latestMonth - 1;
   var firstDay = new Date(date.getFullYear(), date.getMonth() - 1, 1);
   var lastDay = new Date(date.getFullYear(), date.getMonth(), 1);
@@ -592,7 +593,7 @@ function generateMessageForCountAllWorkouts(getProfile, CHANNEL_ACCESS_TOKEN) {
     if (arr.length === 0) {
       return [{
         type: "text",
-        text: "まだ記録がありません."
+        text: "ยังไม่มีบันทึก"
       }];
     }
     var contents = arr.map(function(row) {
@@ -602,8 +603,8 @@ function generateMessageForCountAllWorkouts(getProfile, CHANNEL_ACCESS_TOKEN) {
         style: "link",
         action: {
           type: "postback",
-          label: name.substring(0, 8) + ": " + row[1].toString() + "回",
-          displayText: name + ": " + row[1].toString() + "回",
+          label: name.substring(0, 8) + ": " + row[1].toString() + "ครั้ง",
+          displayText: name + ": " + row[1].toString() + "ครั้ง",
           data: JSON.stringify({
             state: "WORKOUT_RETRIEVE",
             timestamp: parseInt(row[0])
@@ -619,7 +620,7 @@ function generateMessageForCountAllWorkouts(getProfile, CHANNEL_ACCESS_TOKEN) {
 
   return {
     type: "flex",
-    altText: "This is a Flex Message",
+    altText: "นี่คือข้อความ Flex",
     contents: {
       type: "carousel",
       contents: [{
@@ -629,7 +630,7 @@ function generateMessageForCountAllWorkouts(getProfile, CHANNEL_ACCESS_TOKEN) {
           layout: "vertical",
           contents: [{
             type: "text",
-            text: latestMonth.toString() + "月"
+            text: "เดือน " + latestMonth.toString()
           }]
         },
         body: {
@@ -644,7 +645,7 @@ function generateMessageForCountAllWorkouts(getProfile, CHANNEL_ACCESS_TOKEN) {
           layout: "vertical",
           contents: [{
             type: "text",
-            text: prevMonth.toString() + "月"
+            text: "เดือน " + prevMonth.toString()
           }]
         },
         body: {
